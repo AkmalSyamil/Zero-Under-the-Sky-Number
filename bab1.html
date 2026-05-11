@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bab 1 — Zero Under the Sky Number</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,500;1,300;1,500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-deep:       #0a0a0c;
+      --bg-card:       #0f0f12;
+      --bg-edge:       #131318;
+      --text-ivory:    #e8e0d0;
+      --text-muted:    #8a8070;
+      --text-ghost:    #4a4540;
+      --accent-amber:  #c8963a;
+      --accent-dim:    #6b4f20;
+      --line-rule:     #2a2520;
+      --glow-amber:    rgba(200, 150, 58, 0.08);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg-deep);
+      color: var(--text-ivory);
+      font-family: 'Merriweather', Georgia, serif;
+      font-weight: 300;
+      font-size: 17px;
+      line-height: 1.85;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 1.5rem;
+      background-image:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(30, 20, 8, 0.6) 0%, transparent 70%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    }
+
+    /* ─── WRAPPER ─── */
+    .page-wrap {
+      width: 100%;
+      max-width: 700px;
+      padding: 5rem 0 6rem;
+      animation: fadeUp 1.2s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── BOOK HEADER ─── */
+    .book-eyebrow {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.72rem;
+      font-weight: 300;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--accent-amber);
+      margin-bottom: 0.6rem;
+      animation: fadeUp 1.2s ease 0.1s both;
+    }
+
+    .book-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(1.6rem, 5vw, 2.4rem);
+      font-weight: 500;
+      font-style: italic;
+      color: var(--text-ivory);
+      line-height: 1.25;
+      letter-spacing: 0.01em;
+      margin-bottom: 0.5rem;
+      animation: fadeUp 1.2s ease 0.15s both;
+    }
+
+    /* ─── DIVIDER ─── */
+    .ornament-rule {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin: 2.4rem 0 2.8rem;
+      animation: fadeUp 1.2s ease 0.2s both;
+    }
+
+    .ornament-rule::before,
+    .ornament-rule::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--accent-dim), transparent);
+    }
+
+    .ornament-rule span {
+      font-size: 0.9rem;
+      color: var(--accent-amber);
+      letter-spacing: 0.15em;
+    }
+
+    /* ─── CHAPTER LABEL ─── */
+    .chapter-label {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      animation: fadeUp 1.2s ease 0.25s both;
+    }
+
+    .chapter-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(1.3rem, 4vw, 1.85rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text-ivory);
+      margin-bottom: 2.6rem;
+      line-height: 1.3;
+      animation: fadeUp 1.2s ease 0.3s both;
+    }
+
+    /* ─── EPIGRAPH ─── */
+    .epigraph {
+      border-left: 2px solid var(--accent-dim);
+      padding: 0.6rem 1.4rem;
+      margin: 0 0 3rem 1rem;
+      animation: fadeUp 1.2s ease 0.35s both;
+    }
+
+    .epigraph p {
+      font-style: italic;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+
+    .epigraph cite {
+      display: block;
+      margin-top: 0.5rem;
+      font-style: normal;
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      color: var(--text-ghost);
+      text-transform: uppercase;
+    }
+
+    /* ─── PROSE BODY ─── */
+    .prose {
+      animation: fadeUp 1.2s ease 0.4s both;
+    }
+
+    .prose p {
+      margin-bottom: 1.6rem;
+      text-align: justify;
+      hyphens: auto;
+      color: var(--text-ivory);
+    }
+
+    .prose p:first-of-type::first-letter {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 4.2rem;
+      font-weight: 500;
+      line-height: 0.82;
+      float: left;
+      margin: 0.06em 0.12em 0 0;
+      color: var(--accent-amber);
+      text-shadow: 0 0 40px var(--glow-amber);
+    }
+
+    /* Internal monologue — italic, sedikit muted */
+    .prose em {
+      color: #b8a898;
+      font-style: italic;
+    }
+
+    /* Rank / sistem tag */
+    .rank-tag {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      color: var(--accent-amber);
+      font-size: 0.85em;
+      letter-spacing: 0.06em;
+    }
+
+    /* Subheading break */
+    .prose-break {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin: 2.8rem 0 2.4rem;
+      color: var(--text-ghost);
+      font-size: 0.75rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+    }
+
+    .prose-break::before,
+    .prose-break::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--line-rule);
+    }
+
+    /* Scene separator */
+    .scene-sep {
+      text-align: center;
+      color: var(--text-ghost);
+      font-size: 1.1rem;
+      letter-spacing: 0.5em;
+      margin: 2.6rem 0;
+    }
+
+    /* Notifikasi gelang — kotak sistem */
+    .sys-notif {
+      display: block;
+      background: rgba(200, 150, 58, 0.05);
+      border: 1px solid var(--accent-dim);
+      border-left: 3px solid var(--accent-amber);
+      padding: 0.75rem 1.1rem;
+      margin: 1.8rem 0;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.88rem;
+      color: var(--accent-amber);
+      letter-spacing: 0.04em;
+      line-height: 1.6;
+    }
+
+    /* ─── TAIL NOTE ─── */
+    .tail-note {
+      margin-top: 3.6rem;
+      padding-top: 1.8rem;
+      border-top: 1px solid var(--line-rule);
+      font-size: 0.82rem;
+      color: var(--text-ghost);
+      font-style: italic;
+      text-align: right;
+      animation: fadeUp 1.2s ease 0.5s both;
+    }
+
+    /* ─── NAV FOOTER ─── */
+    .nav-footer {
+      margin-top: 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      animation: fadeUp 1.2s ease 0.55s both;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.82rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border: 1px solid var(--line-rule);
+      padding: 0.6rem 1.2rem;
+      transition: color 0.25s, border-color 0.25s, background 0.25s;
+    }
+
+    .nav-btn:hover {
+      color: var(--accent-amber);
+      border-color: var(--accent-dim);
+      background: var(--glow-amber);
+    }
+
+    .nav-btn.next { margin-left: auto; }
+
+    .nav-btn svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    /* ─── SCROLLBAR ─── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg-deep); }
+    ::-webkit-scrollbar-thumb { background: var(--accent-dim); border-radius: 2px; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 480px) {
+      body { font-size: 15.5px; }
+      .prose p:first-of-type::first-letter { font-size: 3.2rem; }
+      .nav-footer { flex-direction: column; align-items: stretch; }
+      .nav-btn.next { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- Book Header -->
+  <p class="book-eyebrow">Zero Under the Sky Number</p>
+  <h1 class="book-title">Zero Under the Sky Number</h1>
+
+  <div class="ornament-rule"><span>✦</span></div>
+
+  <!-- Chapter Label -->
+  <p class="chapter-label">Bab Satu</p>
+  <h2 class="chapter-title">Orang yang Tidak Ada di Dalam Database</h2>
+
+  <!-- Epigraph -->
+  <blockquote class="epigraph">
+    <p>"Apatis bukan berarti tidak merasakan. Apatis berarti sudah terlalu banyak merasakan, sampai tubuh memutuskan untuk berhenti memproses."</p>
+    <cite>— Catatan Tanpa Tanggal, ditemukan di tembok Blok 9-F, Zona Terluar Varas</cite>
+  </blockquote>
+
+  <!-- PROSE -->
+  <div class="prose">
+
+    <p>
+      Nox bangun sebelum alarm berbunyi. Bukan karena ia terbiasa bangun pagi, tapi karena kasur di tempat ia tinggal sudah tipis di satu sisi—bagian yang selalu ia tiduri—dan tulang pinggulnya mengenali lantai beton di bawahnya seperti mengenali musuh lama. Ia berbaring sejenak dengan mata terbuka, menatap plafon yang retak di tiga tempat, dan membiarkan pikirannya kosong dengan cara yang sudah ia latih bertahun-tahun.
+    </p>
+
+    <p>
+      Gelangnya bergetar tepat pukul enam pagi.
+    </p>
+
+    <samp class="sys-notif">
+      [Pembaruan Harian — Sistem Varas]<br>
+      Nama Terdaftar &nbsp;&nbsp;: —<br>
+      Peringkat &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: F-0<br>
+      Kredit Mana &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: 0.00<br>
+      Status Zona &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Toleransi Sementara — Blok 9-F, Zona Terluar<br>
+      Catatan Sistem &nbsp;&nbsp;: Entitas ini tidak memenuhi syarat pembaruan kredit standar. Keberadaan ditoleransi selama tidak ada keluhan warga terdaftar.
+    </samp>
+
+    <p>
+      <em>Entitas.</em> Bukan warga. Bukan manusia. Entitas.
+    </p>
+
+    <p>
+      Nox membaca notifikasi itu dengan ekspresi yang sama seperti orang membaca prakiraan cuaca—datar, tanpa harapan, tanpa juga kekecewaan. Ia sudah terbiasa dengan kata-kata sistem yang memilih presisi di atas kemanusiaan. Dan lagi, ia memang tidak pernah mendaftar dengan nama aslinya. Nama di gelang itu bukan Nox. Nama itu adalah nama orang lain, seseorang yang sudah lama pergi dari kota ini dengan cara yang tidak perlu diingat. Nox hanya meminjam gelangnya. Sistem tidak tahu. Sistem tidak peduli selama angkanya masuk.
+    </p>
+
+    <div class="scene-sep">· · ·</div>
+
+    <p>
+      Apartemennya—jika bisa disebut apartemen—adalah ruang seluas dua kali tempat tidur yang ia sewa dengan cara yang tidak diakui oleh kontrak resmi manapun. Pemiliknya adalah seorang lelaki tua berperingkat <span class="rank-tag">[D-4]</span> yang mengelola tiga lantai teratas bangunan ini secara informal, menyewakan kamar-kamar yang tidak terdaftar di sistem kepada orang-orang yang situasinya juga tidak terdaftar di sistem. Sistem tidak tahu lantai ini ada. Atau mungkin tahu, tapi memilih untuk tidak mengalokasikan sumber daya untuk menyelidikinya, karena efisiensi anggaran pengawasan zona terluar dihitung per-blok, dan blok ini tidak cukup menghasilkan untuk diperhatikan.
+    </p>
+
+    <p>
+      Di dinding sebelah pintu ada satu jendela kecil yang kacanya sudah retak diagonal. Dari sana, jika Nox berdiri tepat di sudut kiri dan sedikit mendongak, ia bisa melihat sepotong langit—segitiga kecil di antara dua gedung yang lebih tinggi, berwarna kelabu pucat di pagi hari dan kuning polutan di malam hari. Ia tidak pernah tahu kenapa ia selalu melihat ke sana setiap pagi. Mungkin karena itu satu-satunya hal di kamar ini yang tidak memiliki harga.
+    </p>
+
+    <p>
+      Ia bangkit. Melipatkan selimut tipis itu dengan rapi meski tidak ada yang akan melihatnya. Mengambil jaket lusuh berwarna abu-abu dari gantungan balik pintu, memakainya, lalu keluar.
+    </p>
+
+    <div class="prose-break">✦ ✦ ✦</div>
+
+    <p>
+      Rutinitas Nox sederhana sampai membosankan, dan ia menyukainya persis karena itu.
+    </p>
+
+    <p>
+      Pagi: turun ke lantai bawah, beli satu bungkus nasi dari warung Bu Serin yang buka sejak subuh di gang sempit belakang bangunan. Bu Serin tidak pernah bertanya tentang gelang atau peringkat. Ia hanya menghitung dengan tangan—lembar kertas lusuh dan pensil—karena terminal pembayaran digital mensyaratkan kredit mana minimum <span class="rank-tag">[E-5]</span> untuk transaksi, dan sebagian besar pelanggannya ada di bawah itu. Di warung Bu Serin, uang fisik masih berlaku. Uang fisik tidak memiliki algoritma.
+    </p>
+
+    <p>
+      "Lauknya habis telor," kata Bu Serin tanpa menoleh, tangannya sudah membungkus nasi. "Ada tempe."
+    </p>
+
+    <p>
+      "Tempe juga bagus," jawab Nox.
+    </p>
+
+    <p>
+      Itu sudah cukup sebagai percakapan. Bu Serin tidak bicara lebih dari yang diperlukan, dan Nox menghargainya lebih dari yang ia tunjukkan. Di kota yang setiap percakapan bisa dicatat oleh sensor suara di tiang-tiang jalan, diam adalah bentuk perlindungan yang paling terjangkau.
+    </p>
+
+    <p>
+      Ia makan di luar, duduk di anak tangga belakang bangunan yang menghadap ke lorong sempit tempat pipa-pipa tua berjejer seperti tulang rusuk gedung yang membusuk. Seekor kucing—kurus, bulunya rontok di satu sisi, gelangnya tentu saja tidak ada karena hewan tidak diwajibkan memakai gelang, sebuah ironi yang tidak luput dari perhatian Nox—duduk di ujung lorong dan menatapnya dengan tenang.
+    </p>
+
+    <p>
+      <em>Beruntung kamu,</em> pikir Nox, tanpa mengatakan apa-apa.
+    </p>
+
+    <div class="scene-sep">· · ·</div>
+
+    <p>
+      Pekerjaannya, sejauh bisa disebut pekerjaan, adalah pembersih zona.
+    </p>
+
+    <p>
+      Setiap pagi setelah makan, ia berjalan ke kantor penugasan informal di ujung Blok 9—bukan kantor resmi, itu terlalu tinggi standarnya untuk siapapun berperingkat di bawah <span class="rank-tag">[D]</span>—melainkan sebuah loket kecil di samping toko onderdil yang dikelola oleh seorang koordinator bernama Pak Daret. Pak Daret berperingkat <span class="rank-tag">[D-6]</span>, cukup tinggi untuk punya akses ke papan tugas zona terluar, cukup rendah untuk masih bisa beroperasi di antara orang-orang seperti Nox tanpa menarik perhatian berlebih dari sistem.
+    </p>
+
+    <p>
+      "Lorong G-12 pagi ini," kata Pak Daret tanpa basa-basi ketika Nox tiba. Ia tidak menatap Nox; matanya pada layar tipis yang menampilkan peta zona terluar dengan titik-titik merah yang berkedip. "Ada tiga laporan slime kemarin malam. Mungkin lebih karena yang lapor cuma yang punya gelang aktif."
+    </p>
+
+    <p>
+      "Bayaran?"
+    </p>
+
+    <p>
+      "Standar. Lima puluh per kepala. Tunai."
+    </p>
+
+    <p>
+      Nox mengangguk. Ia tidak menawar. Menawar membutuhkan posisi tawar, dan posisi tawar membutuhkan pilihan, sementara orang dengan peringkat <span class="rank-tag">[F-0]</span> tidak memiliki banyak pilihan selain menerima apa yang ditawarkan atau tidak makan besok. Logikanya sepraktis itu.
+    </p>
+
+    <div class="prose-break">✦ ✦ ✦</div>
+
+    <p>
+      Lorong G-12 adalah salah satu sudut zona terluar yang bahkan peta resmi kota sudah berhenti memperbarui koordinatnya sejak dua tahun lalu. Bangunan-bangunan di sisinya sebagian besar telah ditinggalkan—bukan karena penghuninya pindah ke tempat yang lebih baik, tapi karena kredit mana mereka habis dan sistem secara otomatis mencabut hak hunian mereka. Apa yang tersisa adalah gedung-gedung kosong yang berlahan-lahan diambil alih oleh lumut, retakan, dan kadang-kadang monster peringkat rendah yang menyukai kegelapan dan ruang tertutup yang tidak ada manusianya.
+    </p>
+
+    <p>
+      Nox berjalan masuk ke lorong itu dengan tangan di saku dan langkah yang tidak terburu-buru. Ia tidak membawa senjata yang terlihat. Warga zona yang melihatnya mungkin mengira ia hanya orang lewat yang nyasar—dan memang begitulah ia ingin terlihat.
+    </p>
+
+    <p>
+      Ia menemukan yang pertama di balik tumpukan puing di sudut kiri: slime berukuran setengah badan manusia, permukaannya berdenyut pelan seperti sesuatu yang bernapas melalui seluruh tubuhnya. Warnanya hijau kecokelatan, indikator mana internal yang sudah terlalu lama tidak terkontrol. Mata—jika bisa disebut mata, lebih tepatnya dua lekukan gelap di permukaan tubuhnya—mengikuti pergerakan Nox saat ia berhenti dua meter di depannya.
+    </p>
+
+    <p>
+      Nox tidak melakukan apa-apa yang tampak dramatis. Tidak ada gerakan tangan yang lebar, tidak ada mantra yang diucapkan, tidak ada cahaya yang menyala dari tubuhnya. Ia hanya berdiri, dan bernapas, dan membiarkan sesuatu yang tidak kasat mata meluas dari dirinya ke udara sekitar—tenang dan tak bersuara seperti kabut yang muncul di atas permukaan air yang diam.
+    </p>
+
+    <p>
+      Slime itu berhenti berdenyut.
+    </p>
+
+    <p>
+      Sedetik kemudian ia runtuh ke dalam dirinya sendiri—bukan meledak, tidak ada suara keras atau percikan—hanya seperti balon yang pelan-pelan kempes, strukturnya kehilangan tegangan yang selama ini menopangnya, dan partikel-partikel kecil yang tersisa tersedot ke udara seperti asap yang diisap angin. Tidak ada residu. Tidak ada noda. Seolah-olah slime itu tidak pernah ada.
+    </p>
+
+    <p>
+      <em>Dua lagi,</em> pikir Nox, dan melanjutkan langkahnya ke dalam lorong.
+    </p>
+
+    <div class="scene-sep">· · ·</div>
+
+    <p>
+      Ia selesai dalam dua puluh menit. Tiga slime, dua tikus besar bermana yang menyusup dari saluran drainase, dan satu imp kecil yang bersembunyi di dalam lemari tua di lantai dua gedung sebelah—semuanya pergi dengan cara yang sama: diam, bersih, tanpa bekas. Tidak ada yang melihatnya bekerja. Tidak ada saksi. Tidak ada kamera di lorong ini karena kamera zona terluar sudah lama tidak mendapat anggaran pemeliharaan.
+    </p>
+
+    <p>
+      Ia berjalan kembali ke loket Pak Daret, menerima uang tunai yang terlipat rapi dalam amplop cokelat, dan memasukkannya ke saku jaket tanpa menghitung. Pak Daret tidak bertanya bagaimana ia melakukannya. Pak Daret tidak pernah bertanya. Ada kesepakatan tidak tertulis di antara mereka: selama lorong-lorong itu bersih, selama tidak ada keluhan, selama tidak ada yang perlu dilaporkan ke sistem—semuanya baik-baik saja.
+    </p>
+
+    <p>
+      "Ada penugasan lagi sore?" tanya Nox.
+    </p>
+
+    <p>
+      Pak Daret menggeser layarnya, mengerutkan dahi sebentar. "Blok 11 mungkin. Tapi belum pasti. Tunggu aja dulu."
+    </p>
+
+    <p>
+      Nox mengangguk dan pergi.
+    </p>
+
+    <div class="prose-break">✦</div>
+
+    <p>
+      Siang harinya ia duduk di atap bangunan tempat ia tinggal. Tidak ada yang lain di sana selain jemuran yang hampir semuanya sudah kering dan satu pot tanaman yang sudah lama mati milik seseorang di lantai bawah. Dari atas, ia bisa melihat garis batas zona—pagar holografik yang berpendar biru pucat di kejauhan, memisahkan zona terluar dari zona menengah. Di balik pagar itu, gedung-gedung lebih tinggi, lebih bersih, dengan jendela yang memancarkan cahaya putih teratur. Di sini, gedung-gedung seperti tumpukan bata lelah yang bersandar satu sama lain agar tidak rubuh.
+    </p>
+
+    <p>
+      Nox menatap pagar itu dengan pandangan yang tidak mengandung keinginan. Tidak ada rasa ingin menyeberang. Tidak ada fantasi tentang peringkat yang lebih tinggi atau zona yang lebih bersih. Hanya pengamatan kosong dari seseorang yang sudah lama berdamai dengan gagasan bahwa dunia berbentuk seperti ini, dan ia ada di sini, dan keduanya adalah fakta yang tidak memerlukan respons emosional.
+    </p>
+
+    <p>
+      Gelangnya bergetar lagi.
+    </p>
+
+    <samp class="sys-notif">
+      [Notifikasi Zona — Sistem Varas]<br>
+      Pemantauan mana Lorong G-12 mendeteksi anomali: pembersihan selesai tanpa residu terdeteksi.<br>
+      Tidak ada laporan penggunaan kekuatan terdaftar.<br>
+      Status &nbsp;: Tidak Memerlukan Tindak Lanjut.<br>
+      Catatan &nbsp;: Kemungkinan pembersihan alami atau kesalahan sensor.
+    </samp>
+
+    <p>
+      <em>Kesalahan sensor.</em>
+    </p>
+
+    <p>
+      Nox membaca baris terakhir itu, dan untuk pertama kalinya hari ini, sesuatu yang hampir menyerupai senyum muncul di sudut bibirnya—terlalu kecil untuk disebut senyum sungguhan, lebih seperti otot yang ingat pernah tahu cara melakukan itu, lalu berhenti sebelum benar-benar selesai.
+    </p>
+
+    <p>
+      Ia menutup layar gelang dan menatap kembali ke langit yang kelabu, di mana awan tebal menggantung rendah seperti langit-langit ruangan yang terlalu sempit. Di suatu tempat di balik awan itu ada matahari yang ia sudah tidak ingat terakhir kali benar-benar melihatnya tanpa filter polutan.
+    </p>
+
+    <p>
+      Tidak apa-apa. Ia tidak sedang mencari matahari.
+    </p>
+
+    <p>
+      Ia hanya sedang ada di sini, menjadi nol di bawah langit yang penuh angka—dan untuk saat ini, itu sudah cukup.
+    </p>
+
+  </div>
+  <!-- /prose -->
+
+  <!-- Tail Note -->
+  <p class="tail-note">Varas, Tahun Sistem ke-17 — Hari ke-1.204</p>
+
+  <!-- Navigation -->
+  <nav class="nav-footer">
+    <a href="prolog.html" class="nav-btn">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      Prolog
+    </a>
+    <a href="bab2.html" class="nav-btn next">
+      Bab Selanjutnya
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+  </nav>
+
+</div><!-- /page-wrap -->
+
+</body>
+</html>
