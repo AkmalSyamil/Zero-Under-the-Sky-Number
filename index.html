@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zero Under the Sky Number</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Merriweather:ital,wght@0,300;0,400;1,300&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg-deep:      #07070a;
+      --bg-card:      #0d0d10;
+      --bg-edge:      #111116;
+      --text-ivory:   #e8e0d0;
+      --text-muted:   #8a8070;
+      --text-ghost:   #3a3530;
+      --accent:       #c8963a;
+      --accent-dim:   #6b4f20;
+      --accent-pale:  #e8b96a;
+      --glow:         rgba(200, 150, 58, 0.12);
+      --glow-hard:    rgba(200, 150, 58, 0.25);
+      --line:         #1e1c18;
+      --red-alert:    #c84a3a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg-deep);
+      color: var(--text-ivory);
+      font-family: 'Merriweather', Georgia, serif;
+      font-weight: 300;
+      min-height: 100vh;
+      overflow-x: hidden;
+      cursor: default;
+    }
+
+    /* ══════════════════════════════════════
+       NOISE + SCANLINES OVERLAY
+    ══════════════════════════════════════ */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    /* ══════════════════════════════════════
+       SYSTEM STATUS BAR (top)
+    ══════════════════════════════════════ */
+    .sys-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 36px;
+      background: rgba(7,7,10,0.92);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+
+    .sys-bar-left, .sys-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--text-ghost);
+      letter-spacing: 0.12em;
+    }
+
+    .sys-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: blink 2.4s ease infinite;
+    }
+
+    .sys-dot.red { background: var(--red-alert); animation-delay: 0.8s; }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+
+    .sys-bar-center {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      animation: flicker 8s ease infinite;
+    }
+
+    @keyframes flicker {
+      0%, 96%, 100% { opacity: 1; }
+      97% { opacity: 0.4; }
+      98% { opacity: 1; }
+      99% { opacity: 0.6; }
+    }
+
+    /* ══════════════════════════════════════
+       HERO SECTION — COVER
+    ══════════════════════════════════════ */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 2rem 4rem;
+      overflow: hidden;
+    }
+
+    /* Radial atmospheric glow */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 50% 40%, rgba(200,150,58,0.06) 0%, transparent 65%),
+        radial-gradient(ellipse 100% 60% at 50% 100%, rgba(200,80,58,0.04) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* Vertical grid lines — city feeling */
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .hero-grid::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(90deg, rgba(200,150,58,0.03) 0px, transparent 1px, transparent 80px),
+        repeating-linear-gradient(180deg, rgba(200,150,58,0.02) 0px, transparent 1px, transparent 60px);
+    }
+
+    /* Floating data particles */
+    .particles {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.55rem;
+      color: var(--accent-dim);
+      opacity: 0;
+      animation: drift linear infinite;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+
+    @keyframes drift {
+      0% { opacity: 0; transform: translateY(0px); }
+      10% { opacity: 0.6; }
+      80% { opacity: 0.3; }
+      100% { opacity: 0; transform: translateY(-120px); }
+    }
+
+    /* Cover art — book spine aesthetic */
+    .cover-frame {
+      position: relative;
+      width: min(320px, 80vw);
+      margin-bottom: 3.5rem;
+      animation: revealCover 2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+    }
+
+    @keyframes revealCover {
+      from { opacity: 0; transform: scale(0.92) translateY(30px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .cover-art {
+      width: 100%;
+      aspect-ratio: 2/3;
+      background: var(--bg-card);
+      border: 1px solid var(--accent-dim);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s ease;
+    }
+
+    .cover-art:hover {
+      transform: translateY(-6px) scale(1.015);
+      box-shadow:
+        0 30px 80px rgba(0,0,0,0.6),
+        0 0 40px rgba(200,150,58,0.12),
+        inset 0 0 60px rgba(200,150,58,0.03);
+    }
+
+    /* Cover illustration using pure CSS */
+    .cover-sky {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg,
+          #07070a 0%,
+          #0d0a08 30%,
+          #141008 55%,
+          #1a1208 75%,
+          #0a0a0c 100%
+        );
+    }
+
+    /* Stars */
+    .cover-stars {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 50%;
+    }
+
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--text-muted);
+      animation: twinkle ease infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.8; }
+      50% { opacity: 0.2; }
+    }
+
+    /* City silhouette */
+    .cover-city {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 55%;
+    }
+
+    .cover-city svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Amber glow from city core */
+    .cover-glow {
+      position: absolute;
+      bottom: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 40%;
+      background: radial-gradient(ellipse, rgba(200,150,58,0.18) 0%, transparent 70%);
+    }
+
+    /* Rain lines */
+    .cover-rain {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .rain-line {
+      position: absolute;
+      top: -10%;
+      width: 1px;
+      background: linear-gradient(180deg, transparent, rgba(180,160,120,0.15), transparent);
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      to { transform: translateY(120%); }
+    }
+
+    /* Rank tag overlay on cover */
+    .cover-rank {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.58rem;
+      color: var(--accent);
+      background: rgba(7,7,10,0.85);
+      border: 1px solid var(--accent-dim);
+      padding: 4px 8px;
+      letter-spacing: 0.1em;
+      animation: blink 3s ease infinite;
+    }
+
+    /* Cover title inside art */
+    .cover-inner-title {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 1.5rem 1.2rem 1.2rem;
+      background: linear-gradient(0deg, rgba(7,7,10,0.96) 0%, transparent 100%);
+    }
+
+    .cover-inner-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.52rem;
+      letter-spacing: 0.25em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+
+    .cover-inner-name {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(1rem, 4vw, 1.35rem);
+      font-weight: 500;
+      font-style: italic;
+      color: var(--text-ivory);
+      line-height: 1.2;
+    }
+
+    /* Click overlay for cover */
+    .cover-click-hint {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(7,7,10,0);
+      transition: background 0.35s ease;
+    }
+
+    .cover-click-hint:hover { background: rgba(7,7,10,0.5); }
+
+    .cover-click-text {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      border: 1px solid var(--accent-dim);
+      padding: 0.5rem 1rem;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .cover-click-hint:hover .cover-click-text {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Book shadow/depth */
+    .cover-frame::after {
+      content: '';
+      position: absolute;
+      left: -12px;
+      top: 4px;
+      bottom: -4px;
+      width: 12px;
+      background: linear-gradient(90deg, transparent, var(--bg-edge));
+      border-left: 1px solid var(--accent-dim);
+      border-bottom: 1px solid var(--accent-dim);
+    }
+
+    /* ── HERO TEXT ── */
+    .hero-text {
+      text-align: center;
+      animation: fadeUp 1.4s ease 0.6s both;
+      position: relative;
+      z-index: 2;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-eyebrow {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.8rem;
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(2rem, 7vw, 3.8rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text-ivory);
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.3rem;
+    }
+
+    .hero-title strong {
+      font-weight: 500;
+      color: var(--accent-pale);
+    }
+
+    .hero-subtitle {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(0.85rem, 2.5vw, 1.05rem);
+      color: var(--text-muted);
+      font-style: italic;
+      margin-bottom: 2rem;
+    }
+
+    .hero-tagline {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      color: var(--text-ghost);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 0.6rem 1.5rem;
+      margin: 0 auto 2.4rem;
+      display: inline-block;
+    }
+
+    /* CTA */
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .btn-primary {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--bg-deep);
+      background: var(--accent);
+      border: none;
+      padding: 0.75rem 2rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.25s, transform 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--accent-pale);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+
+    .btn-primary:hover::before { transform: scaleX(1); }
+    .btn-primary:hover { transform: translateY(-2px); }
+
+    .btn-primary span { position: relative; z-index: 1; }
+
+    .btn-secondary {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: transparent;
+      border: 1px solid var(--accent-dim);
+      padding: 0.75rem 2rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color 0.25s, background 0.25s, color 0.25s, transform 0.2s;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      background: var(--glow);
+      transform: translateY(-2px);
+    }
+
+    /* Scroll indicator */
+    .scroll-hint {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.55rem;
+      color: var(--text-ghost);
+      letter-spacing: 0.2em;
+      animation: fadeUp 2s ease 1.5s both;
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(180deg, var(--accent-dim), transparent);
+      animation: scrollPulse 2s ease infinite;
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 1; transform: scaleY(1); }
+      50% { opacity: 0.4; transform: scaleY(0.6); }
+    }
+
+    /* ══════════════════════════════════════
+       SYNOPSIS SECTION
+    ══════════════════════════════════════ */
+    .section-synopsis {
+      padding: 6rem 2rem;
+      max-width: 860px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .section-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 2.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--accent-dim), transparent);
+    }
+
+    .synopsis-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .synopsis-text {
+      font-family: 'Merriweather', Georgia, serif;
+      font-size: 0.95rem;
+      font-weight: 300;
+      line-height: 1.9;
+      color: var(--text-muted);
+    }
+
+    .synopsis-text p { margin-bottom: 1.2rem; }
+    .synopsis-text em { color: var(--text-ivory); font-style: italic; }
+
+    .synopsis-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .stat-card {
+      border: 1px solid var(--line);
+      padding: 1.2rem;
+      position: relative;
+      background: var(--bg-card);
+      transition: border-color 0.3s;
+    }
+
+    .stat-card:hover { border-color: var(--accent-dim); }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px;
+      height: 100%;
+      background: var(--accent-dim);
+    }
+
+    .stat-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      color: var(--text-ghost);
+      text-transform: uppercase;
+      margin-bottom: 0.3rem;
+    }
+
+    .stat-value {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.1rem;
+      color: var(--text-ivory);
+      font-style: italic;
+    }
+
+    /* ══════════════════════════════════════
+       CHAPTER LIST SECTION
+    ══════════════════════════════════════ */
+    .section-chapters {
+      padding: 4rem 2rem 6rem;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .chapters-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .chapter-item {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      text-decoration: none;
+      color: inherit;
+      border-bottom: 1px solid var(--line);
+      transition: background 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chapter-item:last-child { border-bottom: none; }
+
+    .chapter-item::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 0;
+      background: var(--glow);
+      transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .chapter-item:hover::before { width: 100%; }
+
+    .chapter-item:hover .chapter-arrow { transform: translateX(4px); color: var(--accent); }
+    .chapter-item:hover .chapter-num { color: var(--accent); }
+    .chapter-item:hover { background: rgba(200,150,58,0.03); }
+
+    .chapter-num {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--text-ghost);
+      letter-spacing: 0.15em;
+      padding: 1.4rem 1.5rem;
+      min-width: 90px;
+      border-right: 1px solid var(--line);
+      transition: color 0.25s;
+      position: relative;
+      z-index: 1;
+    }
+
+    .chapter-info {
+      flex: 1;
+      padding: 1.4rem 1.8rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .chapter-tag {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.52rem;
+      letter-spacing: 0.2em;
+      color: var(--text-ghost);
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+    }
+
+    .chapter-name {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.1rem;
+      font-style: italic;
+      color: var(--text-ivory);
+      font-weight: 300;
+    }
+
+    .chapter-meta {
+      display: flex;
+      gap: 1rem;
+      margin-top: 0.4rem;
+    }
+
+    .chapter-meta-item {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.5rem;
+      color: var(--text-ghost);
+      letter-spacing: 0.1em;
+    }
+
+    .chapter-status {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.52rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      padding: 0 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .chapter-status.locked {
+      color: var(--text-ghost);
+    }
+
+    .chapter-status-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .chapter-status.locked .chapter-status-dot {
+      background: var(--text-ghost);
+    }
+
+    .chapter-arrow {
+      padding: 0 1.2rem 0 0.5rem;
+      color: var(--text-ghost);
+      font-size: 0.9rem;
+      transition: transform 0.25s, color 0.25s;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Coming soon row */
+    .chapter-item.coming-soon {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    /* ══════════════════════════════════════
+       WORLD INFO SECTION
+    ══════════════════════════════════════ */
+    .section-world {
+      padding: 5rem 2rem;
+      background: var(--bg-card);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-world-inner {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .rank-table {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+      margin-top: 2rem;
+    }
+
+    .rank-cell {
+      background: var(--bg-card);
+      padding: 1.2rem;
+      transition: background 0.25s;
+    }
+
+    .rank-cell:hover { background: var(--bg-edge); }
+
+    .rank-badge {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.4rem;
+    }
+
+    .rank-badge.s { color: #f0d060; }
+    .rank-badge.a { color: #c8963a; }
+    .rank-badge.b { color: #8aaa70; }
+    .rank-badge.c { color: #6a90b0; }
+    .rank-badge.d { color: #7a70a0; }
+    .rank-badge.e { color: #907060; }
+    .rank-badge.f { color: #604840; }
+
+    .rank-desc {
+      font-family: 'Merriweather', serif;
+      font-size: 0.72rem;
+      font-weight: 300;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* ══════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════ */
+    .footer {
+      padding: 3rem 2rem;
+      text-align: center;
+      border-top: 1px solid var(--line);
+    }
+
+    .footer-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.85rem;
+      font-style: italic;
+      color: var(--text-ghost);
+      margin-bottom: 0.4rem;
+    }
+
+    .footer-system {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      color: var(--text-ghost);
+    }
+
+    /* ══════════════════════════════════════
+       MODAL — BAB LIST POPUP
+    ══════════════════════════════════════ */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(7,7,10,0.88);
+      backdrop-filter: blur(8px);
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-box {
+      background: var(--bg-card);
+      border: 1px solid var(--accent-dim);
+      max-width: 520px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+      transform: translateY(20px) scale(0.96);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-overlay.open .modal-box {
+      transform: translateY(0) scale(1);
+    }
+
+    .modal-header {
+      padding: 1.5rem 1.8rem;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      font-style: italic;
+      color: var(--text-ivory);
+    }
+
+    .modal-close {
+      background: none;
+      border: 1px solid var(--line);
+      color: var(--text-ghost);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.6rem;
+      padding: 0.3rem 0.7rem;
+      cursor: pointer;
+      letter-spacing: 0.1em;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .modal-close:hover { color: var(--accent); border-color: var(--accent-dim); }
+
+    .modal-list { padding: 0.5rem 0; }
+
+    .modal-item {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      text-decoration: none;
+      color: inherit;
+      border-bottom: 1px solid var(--line);
+      transition: background 0.2s;
+    }
+
+    .modal-item:last-child { border-bottom: none; }
+    .modal-item:hover { background: var(--glow); }
+
+    .modal-item.locked { opacity: 0.4; pointer-events: none; }
+
+    .modal-num {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--text-ghost);
+      padding: 1rem 1.2rem;
+      min-width: 70px;
+      border-right: 1px solid var(--line);
+    }
+
+    .modal-info {
+      flex: 1;
+      padding: 1rem 1.4rem;
+    }
+
+    .modal-chapter-tag {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.5rem;
+      color: var(--text-ghost);
+      letter-spacing: 0.15em;
+      margin-bottom: 0.2rem;
+    }
+
+    .modal-chapter-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-style: italic;
+      color: var(--text-ivory);
+    }
+
+    .modal-arrow {
+      padding: 0 1rem;
+      color: var(--text-ghost);
+      font-size: 0.8rem;
+    }
+
+    /* ══════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════ */
+    @media (max-width: 640px) {
+      .synopsis-layout { grid-template-columns: 1fr; gap: 2.5rem; }
+      .chapter-status { display: none; }
+      .sys-bar-left span:not(:first-child) { display: none; }
+      .hero-cta { flex-direction: column; align-items: center; }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg-deep); }
+    ::-webkit-scrollbar-thumb { background: var(--accent-dim); border-radius: 2px; }
+  </style>
+</head>
+<body>
+
+<!-- SYSTEM STATUS BAR -->
+<div class="sys-bar">
+  <div class="sys-bar-left">
+    <div class="sys-dot"></div>
+    <span>VARAS NETWORK</span>
+    <span>ZONA INTI ▸ AKTIF</span>
+  </div>
+  <div class="sys-bar-center" id="sys-time">SISTEM MANA — TAHUN KE-17</div>
+  <div class="sys-bar-right">
+    <span id="live-time">—</span>
+    <div class="sys-dot red"></div>
+    <span>PERINGATAN AKTIF: 12.304</span>
+  </div>
+</div>
+
+<!-- FLOATING PARTICLES -->
+<div class="particles" id="particles"></div>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section class="hero">
+  <div class="hero-grid"></div>
+
+  <!-- Book Cover -->
+  <div class="cover-frame">
+    <div class="cover-art" onclick="openModal()">
+
+      <div class="cover-sky"></div>
+
+      <!-- Stars -->
+      <div class="cover-stars" id="starsContainer"></div>
+
+      <!-- Rain -->
+      <div class="cover-rain" id="rainContainer"></div>
+
+      <!-- City silhouette SVG -->
+      <div class="cover-city">
+        <svg viewBox="0 0 320 300" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="cityGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#0a0a0c"/>
+              <stop offset="100%" stop-color="#050508"/>
+            </linearGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="2" result="blur"/>
+              <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+            </filter>
+          </defs>
+
+          <!-- Background city mass -->
+          <rect x="0" y="80" width="320" height="220" fill="url(#cityGrad)"/>
+
+          <!-- Far buildings -->
+          <rect x="10" y="120" width="18" height="180" fill="#0c0c10"/>
+          <rect x="32" y="100" width="14" height="200" fill="#0e0e12"/>
+          <rect x="50" y="130" width="22" height="170" fill="#0a0a0e"/>
+          <rect x="76" y="90" width="16" height="210" fill="#0c0c10"/>
+          <rect x="96" y="145" width="28" height="155" fill="#0e0e12"/>
+          <rect x="128" y="80" width="12" height="220" fill="#0a0a0e"/>
+          <rect x="144" y="105" width="20" height="195" fill="#0c0c10"/>
+          <rect x="168" y="70" width="30" height="230" fill="#0e0e12"/>
+          <rect x="202" y="110" width="16" height="190" fill="#0a0a0e"/>
+          <rect x="222" y="90" width="24" height="210" fill="#0c0c10"/>
+          <rect x="250" y="135" width="18" height="165" fill="#0e0e12"/>
+          <rect x="272" y="100" width="20" height="200" fill="#0a0a0e"/>
+          <rect x="296" y="125" width="24" height="175" fill="#0c0c10"/>
+
+          <!-- Mid towers -->
+          <rect x="20" y="160" width="30" height="140" fill="#111116"/>
+          <rect x="55" y="140" width="38" height="160" fill="#131318"/>
+          <rect x="100" y="150" width="26" height="150" fill="#111116"/>
+          <rect x="135" y="120" width="48" height="180" fill="#131318"/>
+          <rect x="190" y="155" width="34" height="145" fill="#111116"/>
+          <rect x="230" y="130" width="42" height="170" fill="#131318"/>
+          <rect x="278" y="165" width="32" height="135" fill="#111116"/>
+
+          <!-- CORE TOWER — main spire -->
+          <rect x="140" y="20" width="8" height="280" fill="#1a1a20"/>
+          <rect x="130" y="45" width="60" height="255" fill="#181820"/>
+          <rect x="120" y="80" width="80" height="220" fill="#1a1a22"/>
+          <!-- Spire tip glow -->
+          <line x1="144" y1="20" x2="144" y2="5" stroke="#c8963a" stroke-width="1.5" opacity="0.6"/>
+          <circle cx="144" cy="4" r="2.5" fill="#c8963a" opacity="0.8" filter="url(#glow)"/>
+
+          <!-- Core tower windows — amber lit -->
+          <rect x="135" y="55" width="4" height="6" fill="#c8963a" opacity="0.7"/>
+          <rect x="145" y="55" width="4" height="6" fill="#c8963a" opacity="0.5"/>
+          <rect x="155" y="55" width="4" height="6" fill="#c8963a" opacity="0.6"/>
+          <rect x="135" y="70" width="4" height="6" fill="#c8963a" opacity="0.4"/>
+          <rect x="155" y="70" width="4" height="6" fill="#c8963a" opacity="0.7"/>
+          <rect x="135" y="90" width="4" height="6" fill="#8a7040" opacity="0.5"/>
+          <rect x="145" y="90" width="4" height="6" fill="#c8963a" opacity="0.6"/>
+          <rect x="155" y="90" width="4" height="6" fill="#8a7040" opacity="0.4"/>
+          <rect x="145" y="105" width="4" height="6" fill="#c8963a" opacity="0.3"/>
+
+          <!-- Scattered windows on other buildings -->
+          <rect x="38" y="108" width="3" height="4" fill="#604830" opacity="0.6"/>
+          <rect x="38" y="118" width="3" height="4" fill="#604830" opacity="0.4"/>
+          <rect x="80" y="98" width="3" height="4" fill="#503828" opacity="0.5"/>
+          <rect x="175" y="78" width="3" height="4" fill="#604830" opacity="0.6"/>
+          <rect x="183" y="90" width="3" height="4" fill="#503828" opacity="0.4"/>
+          <rect x="226" y="95" width="3" height="4" fill="#604830" opacity="0.5"/>
+          <rect x="226" y="108" width="3" height="4" fill="#604830" opacity="0.3"/>
+
+          <!-- Ground haze -->
+          <rect x="0" y="260" width="320" height="40" fill="#07070a" opacity="0.7"/>
+
+          <!-- Amber glow on ground from core -->
+          <ellipse cx="160" cy="280" rx="80" ry="20" fill="#c8963a" opacity="0.04"/>
+          <ellipse cx="160" cy="270" rx="50" ry="15" fill="#c8963a" opacity="0.06"/>
+        </svg>
+      </div>
+
+      <!-- Amber glow -->
+      <div class="cover-glow"></div>
+
+      <!-- Rank overlay -->
+      <div class="cover-rank">[F-0 | Kredit Mana: —]</div>
+
+      <!-- Inner title -->
+      <div class="cover-inner-title">
+        <div class="cover-inner-label">Sebuah Novel</div>
+        <div class="cover-inner-name">Zero Under the Sky Number</div>
+      </div>
+
+      <!-- Click hint overlay -->
+      <div class="cover-click-hint">
+        <div class="cover-click-text">↳ Buka Daftar Bab</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero text -->
+  <div class="hero-text">
+    <p class="hero-eyebrow">Tahun Sistem ke-17 · Kota Varas</p>
+    <h1 class="hero-title">Zero Under the<br><strong>Sky Number</strong></h1>
+    <p class="hero-subtitle">Di kota yang mengukur manusia dengan angka,<br>menjadi nol adalah cara paling sunyi untuk menghilang.</p>
+    <div class="hero-tagline">SISTEM MANA · GELANG PENANDA · ZONA TERLUAR</div>
+    <div class="hero-cta">
+      <a href="prolog.html" class="btn-primary"><span>↳ Mulai Baca</span></a>
+      <button class="btn-secondary" onclick="openModal()">Daftar Bab</button>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    <span>GULIR</span>
+  </div>
+</section>
+
+<!-- ═══════════════ SYNOPSIS ═══════════════ -->
+<section class="section-synopsis">
+  <div class="section-label">Sinopsis</div>
+
+  <div class="synopsis-layout">
+    <div class="synopsis-text">
+      <p>Varas bukan lagi kota. Ia adalah <em>Sistem</em>—mesin raksasa yang berdenyut dengan mana, mengalir dari menara-menara inti ke zona-zona pinggiran yang semakin redup dan semakin terlupakan.</p>
+      <p>Setiap warga terikat gelang penanda. Setiap langkah, setiap napas, setiap kegagalan—semuanya diterjemahkan ke dalam angka. Kredit mana yang tinggi berarti akses, kehormatan, eksistensi. Kredit yang nol berarti kamu masih ada, tapi kota sudah belajar lupa bahwa kamu pernah bernama.</p>
+      <p>Di antara kerumunan angka itu, ada seseorang dengan peringkat <em>[F-0 | Kredit Mana: —]</em>. Bukan sekadar miskin. Bukan sekadar marginal. Ia adalah titik nol yang bahkan sistem tidak lagi repot-repot menghitung.</p>
+      <p>Dan dari titik itulah semuanya dimulai.</p>
+    </div>
+
+    <div class="synopsis-stats">
+      <div class="stat-card">
+        <div class="stat-label">Genre</div>
+        <div class="stat-value">Dark Fantasy · Dystopia</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Setting</div>
+        <div class="stat-value">Kota Varas, Tahun Sistem ke-17</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Tema</div>
+        <div class="stat-value">Identitas, Hierarki, Eksistensi</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Status</div>
+        <div class="stat-value">Sedang Berjalan</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CHAPTERS ═══════════════ -->
+<section class="section-chapters">
+  <div class="section-label">Daftar Bab</div>
+
+  <div class="chapters-grid">
+
+    <!-- Prolog -->
+    <a href="prolog.html" class="chapter-item">
+      <div class="chapter-num">PROLOG</div>
+      <div class="chapter-info">
+        <div class="chapter-tag">Pembuka</div>
+        <div class="chapter-name">Kota yang Belajar Melupakan Namamu</div>
+        <div class="chapter-meta">
+          <span class="chapter-meta-item">Varas, Malam Hujan Abu ke-1.203</span>
+        </div>
+      </div>
+      <div class="chapter-status">
+        <div class="chapter-status-dot"></div>
+        TERSEDIA
+      </div>
+      <div class="chapter-arrow">›</div>
+    </a>
+
+    <!-- Bab 1 -->
+    <a href="bab1.html" class="chapter-item">
+      <div class="chapter-num">BAB 01</div>
+      <div class="chapter-info">
+        <div class="chapter-tag">Bab Pertama</div>
+        <div class="chapter-name">Nama yang Tidak Ada di Database</div>
+        <div class="chapter-meta">
+          <span class="chapter-meta-item">Zona Terluar · Pagi Hari</span>
+        </div>
+      </div>
+      <div class="chapter-status">
+        <div class="chapter-status-dot"></div>
+        TERSEDIA
+      </div>
+      <div class="chapter-arrow">›</div>
+    </a>
+
+    <!-- Coming soon -->
+    <div class="chapter-item coming-soon">
+      <div class="chapter-num">BAB 02</div>
+      <div class="chapter-info">
+        <div class="chapter-tag">Segera Hadir</div>
+        <div class="chapter-name">—</div>
+      </div>
+      <div class="chapter-status locked">
+        <div class="chapter-status-dot"></div>
+        BELUM TERBIT
+      </div>
+      <div class="chapter-arrow">›</div>
+    </div>
+
+    <div class="chapter-item coming-soon">
+      <div class="chapter-num">BAB 03</div>
+      <div class="chapter-info">
+        <div class="chapter-tag">Segera Hadir</div>
+        <div class="chapter-name">—</div>
+      </div>
+      <div class="chapter-status locked">
+        <div class="chapter-status-dot"></div>
+        BELUM TERBIT
+      </div>
+      <div class="chapter-arrow">›</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════ WORLD INFO ═══════════════ -->
+<section class="section-world">
+  <div class="section-world-inner">
+    <div class="section-label">Sistem Peringkat Mana · Kota Varas</div>
+
+    <div class="rank-table">
+      <div class="rank-cell">
+        <div class="rank-badge s">[S] — Apex</div>
+        <div class="rank-desc">Puncak hierarki. Akses penuh ke semua zona. Kekayaan mana tak terbatas.</div>
+      </div>
+      <div class="rank-cell">
+        <div class="rank-badge a">[A] — Tinggi</div>
+        <div class="rank-desc">Elit zona inti. Fasilitas premium. Pengaruh atas kebijakan sistem.</div>
+      </div>
+      <div class="rank-cell">
+        <div class="rank-badge b">[B] — Menengah Atas</div>
+        <div class="rank-desc">Zona menengah atas. Kehidupan nyaman. Masih bisa jatuh.</div>
+      </div>
+      <div class="rank-cell">
+        <div class="rank-badge c">[C] — Menengah</div>
+        <div class="rank-desc">Mayoritas pekerja. Akses terbatas tapi stabil—jika patuh.</div>
+      </div>
+      <div class="rank-cell">
+        <div class="rank-badge d">[D] — Bawah</div>
+        <div class="rank-desc">Zona pinggiran. Layanan publik minimum. Selalu dalam pengawasan.</div>
+      </div>
+      <div class="rank-cell">
+        <div class="rank-badge e">[E] — Marginal</div>
+        <div class="rank-desc">Hampir tidak ada akses. Satu langkah dari relokasi paksa.</div>
+      </div>
+      <div class="rank-cell">
+        <div class="rank-badge f">[F] — Terlupakan</div>
+        <div class="rank-desc">Zona mati. Sistem mencatat tapi tidak peduli. Eksistensi tidak dijamin.</div>
+      </div>
+      <div class="rank-cell">
+        <div class="rank-badge f">[—] · Nol</div>
+        <div class="rank-desc">Di bawah F. Tidak terhitung. Kota telah belajar melupakanmu sepenuhnya.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer class="footer">
+  <div class="footer-title">Zero Under the Sky Number</div>
+  <div class="footer-system">VARAS MANAGEMENT SYSTEM v17.3.1 · SEMUA HAK DICATAT DALAM DATABASE</div>
+</footer>
+
+<!-- ═══════════════ MODAL ═══════════════ -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal-box" id="modalBox">
+    <div class="modal-header">
+      <div class="modal-title">Daftar Bab</div>
+      <button class="modal-close" onclick="closeModal()">TUTUP ✕</button>
+    </div>
+    <div class="modal-list">
+
+      <a href="prolog.html" class="modal-item">
+        <div class="modal-num">PROLOG</div>
+        <div class="modal-info">
+          <div class="modal-chapter-tag">Pembuka · Tersedia</div>
+          <div class="modal-chapter-name">Kota yang Belajar Melupakan Namamu</div>
+        </div>
+        <div class="modal-arrow">›</div>
+      </a>
+
+      <a href="bab1.html" class="modal-item">
+        <div class="modal-num">BAB 01</div>
+        <div class="modal-info">
+          <div class="modal-chapter-tag">Bab Pertama · Tersedia</div>
+          <div class="modal-chapter-name">Nama yang Tidak Ada di Database</div>
+        </div>
+        <div class="modal-arrow">›</div>
+      </a>
+
+      <div class="modal-item locked">
+        <div class="modal-num">BAB 02</div>
+        <div class="modal-info">
+          <div class="modal-chapter-tag">Segera Hadir</div>
+          <div class="modal-chapter-name">—</div>
+        </div>
+        <div class="modal-arrow">›</div>
+      </div>
+
+      <div class="modal-item locked">
+        <div class="modal-num">BAB 03</div>
+        <div class="modal-info">
+          <div class="modal-chapter-tag">Segera Hadir</div>
+          <div class="modal-chapter-name">—</div>
+        </div>
+        <div class="modal-arrow">›</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── LIVE CLOCK ──
+  function updateClock() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2,'0');
+    const s = String(now.getSeconds()).padStart(2,'0');
+    document.getElementById('live-time').textContent = `${h}:${m}:${s}`;
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // ── STARS ──
+  const sc = document.getElementById('starsContainer');
+  for (let i = 0; i < 55; i++) {
+    const s = document.createElement('div');
+    s.classList.add('star');
+    const size = Math.random() * 1.5 + 0.5;
+    s.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${Math.random()*100}%;
+      top:${Math.random()*100}%;
+      animation-duration:${2+Math.random()*4}s;
+      animation-delay:${Math.random()*4}s;
+      opacity:${0.2+Math.random()*0.6};
+    `;
+    sc.appendChild(s);
+  }
+
+  // ── RAIN ──
+  const rc = document.getElementById('rainContainer');
+  for (let i = 0; i < 30; i++) {
+    const r = document.createElement('div');
+    r.classList.add('rain-line');
+    const h = 15 + Math.random() * 40;
+    r.style.cssText = `
+      left:${Math.random()*100}%;
+      height:${h}px;
+      animation-duration:${0.8+Math.random()*1.2}s;
+      animation-delay:${Math.random()*2}s;
+      opacity:${0.15+Math.random()*0.3};
+    `;
+    rc.appendChild(r);
+  }
+
+  // ── FLOATING PARTICLES (data numbers) ──
+  const pc = document.getElementById('particles');
+  const dataStrings = [
+    '[E-7 | 0.3]','[F-2 | 0.12]','[C-3]','[S | ∞]',
+    '[F-0 | —]','[B-4 | 18.2]','RELOKASI','PERINGATAN',
+    'KREDIT MANA','ZONA 7-C','[D-1 | 2.4]','SCAN AKTIF',
+    '[A-2 | 94.7]','STATUS: BERISIKO','[F-1 | 0.01]',
+  ];
+
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.classList.add('particle');
+    p.textContent = dataStrings[Math.floor(Math.random()*dataStrings.length)];
+    const delay = Math.random() * 12;
+    const dur = 8 + Math.random() * 10;
+    p.style.cssText = `
+      left:${Math.random()*95}%;
+      bottom:${Math.random()*40}%;
+      animation-duration:${dur}s;
+      animation-delay:${delay}s;
+    `;
+    pc.appendChild(p);
+  }
+
+  // ── MODAL ──
+  function openModal() {
+    document.getElementById('modalOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function closeModalOutside(e) {
+    if (e.target === document.getElementById('modalOverlay')) closeModal();
+  }
+
+  // Esc to close
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  // ── SCROLL REVEAL ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.stat-card, .chapter-item, .rank-cell').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(16px)';
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(el);
+  });
+
+  // Stagger chapter items
+  document.querySelectorAll('.chapter-item').forEach((el, i) => {
+    el.style.transitionDelay = `${i * 0.08}s`;
+  });
+
+  document.querySelectorAll('.rank-cell').forEach((el, i) => {
+    el.style.transitionDelay = `${i * 0.05}s`;
+  });
+
+  document.querySelectorAll('.stat-card').forEach((el, i) => {
+    el.style.transitionDelay = `${i * 0.1}s`;
+  });
+</script>
+
+</body>
+</html>
